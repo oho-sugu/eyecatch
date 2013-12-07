@@ -66,7 +66,7 @@ class ListPage(webapp.RequestHandler):
             dict_key = {"keyword": keyword.keyword, "count": keyword.count, "lat": keyword.lat, "lon": keyword.lon}
             ret_array.append(dict_key)
 
-        self.response.out.write(json.dumps(retArray))
+        self.response.out.write(json.dumps(ret_array))
 
 application = webapp.WSGIApplication(
     [('/put', PutPage),
