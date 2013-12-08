@@ -70,26 +70,27 @@ public class TextRecognitionClient {
 			try {
 				RecognitionRequestQueue queue = mDcmApi.requestQueue(jpegImage);
 
-				if (queue != null) {
+				if (queue != null&&queue.job!=null) {
 					Log.d(TAG, queue.toString());
 					Log.d(TAG, queue.job.id);
 					Log.d(TAG, queue.job.queue_time);
 					Log.d(TAG, queue.job.status);
-					Log.d(TAG, queue.message.text);
-				}
-				while(true){
-					RecognitionJobResult result= mDcmApi.requestRecognitionResult(queue);
-					if(result!=null){
-						for (Word word:result.words.word){
-							Logger.d(word.text);
-							Logger.d(""+word.score);
-							Logger.d(""+word.category);
-						}
-						if(result.job.status=="success"){
-							
+//					Log.d(TAG, queue.message.text);
+					while (true) {
+						RecognitionJobResult result = mDcmApi
+								.requestRecognitionResult(queue);
+						if (result != null && result.words!=null) {
+							for (Word word : result.words.word) {
+								Logger.d(word.text);
+								Logger.d("" + word.score);
+								Logger.d("" + word.category);
+							}
+							if (result.job.status == "success") {
+								break;
+							}
 						}
 					}
-					break;
+
 				}
 			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
@@ -101,7 +102,7 @@ public class TextRecognitionClient {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} finally {
-				Log.e(EyeCatchActivity.TAG, "Finish Recognition");
+				Logger.e("Finish Recognition");
 			}
 
 		} catch (InterruptedException e1) {
