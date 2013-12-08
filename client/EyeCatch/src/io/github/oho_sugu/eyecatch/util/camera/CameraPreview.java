@@ -1,11 +1,17 @@
 package io.github.oho_sugu.eyecatch.util.camera;
 
 import io.github.oho_sugu.eyecatch.textrecognition.TextRecognitionClient;
+import io.github.oho_sugu.eyecatch.textrecognition.result.RecognitionJobResult;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 import android.hardware.Camera;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -15,6 +21,7 @@ public class CameraPreview extends SurfaceView implements
 	private SurfaceHolder mHolder;
 	private Camera mCamera;
 	static String TAG = "CameraPreview.cls";
+	Handler mHandler = new Handler();
     private TextRecognitionClient mClient;
     int mFormatPreviewCallback;
     
@@ -23,6 +30,7 @@ public class CameraPreview extends SurfaceView implements
 	public CameraPreview(Context context, Camera camera) {
 		// TODO Auto-generated constructor stub
 		super(context);
+//		mContext = context;
 		mCamera = camera;
 		
 		mFormatPreviewCallback = mCamera.getParameters().getPreviewFormat();
@@ -94,7 +102,11 @@ public class CameraPreview extends SurfaceView implements
 				@Override
 				public void run() {
 					// TODO Auto-generated method stub
-					mClient.request(camera, data);
+					RecognitionJobResult result = mClient.request(camera, data);
+					Bundle bundle =new Bundle();
+					for(RecognitionJobResult.Word word : result.words.word){
+						bundle.putString(word.text,word.category);
+					}
 				}
 			});
 			mThread.start();
