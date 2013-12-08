@@ -18,15 +18,7 @@ public class ListResult {
 		@JSONHint (name = "lon")
 		public long lon;
 	}
+	@JSONHint(name="catch")
+	public List<Keyword> keywords;
 	
-	public List<Keyword> keywords = new ArrayList<Keyword>();
-	
-	public void addKeyword(String keyword,int count,long lat,long lon){
-		Keyword key = new Keyword();
-		key.keyword = keyword;
-		key.count = count;
-		key.lat = lat;
-		key.lon = lon;
-		this.keywords.add(key);
-	}
 }

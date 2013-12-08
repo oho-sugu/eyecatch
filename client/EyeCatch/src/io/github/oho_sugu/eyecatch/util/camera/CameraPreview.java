@@ -40,7 +40,7 @@ public class CameraPreview extends SurfaceView implements
 		// mContext = context;
 		mCamera = camera;
 		mCallback = callback;
-		mFormatPreviewCallback = mCamera.getParameters().getPreviewFormat();
+		//mFormatPreviewCallback = mCamera.getParameters().getPreviewFormat();
 		// Install a SurfaceHolder.Callback so we get notified when the
 		// underlying surface is created and destroyed.
 		mHolder = getHolder();

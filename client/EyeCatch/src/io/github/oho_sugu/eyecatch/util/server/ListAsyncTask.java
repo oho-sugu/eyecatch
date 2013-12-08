@@ -1,6 +1,7 @@
 package io.github.oho_sugu.eyecatch.util.server;
 
 import io.github.oho_sugu.eyecatch.OverlayView;
+import io.github.oho_sugu.eyecatch.textrecognition.util.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -44,6 +45,7 @@ public class ListAsyncTask extends
 			}
 			String json_str = builder.toString();
 
+			Logger.d(json_str);
 			listResult = JSON.decode(json_str, ListResult.class);
 
 		} catch (UnsupportedEncodingException e) {

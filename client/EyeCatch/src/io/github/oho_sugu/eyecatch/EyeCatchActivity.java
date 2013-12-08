@@ -1,14 +1,16 @@
 package io.github.oho_sugu.eyecatch;
 
-import java.util.List;
-
 import io.github.oho_sugu.eyecatch.textrecognition.util.Logger;
 import io.github.oho_sugu.eyecatch.util.SystemUiHider;
 import io.github.oho_sugu.eyecatch.util.camera.CameraPreview;
 import io.github.oho_sugu.eyecatch.util.camera.CameraUtil;
 import io.github.oho_sugu.eyecatch.util.gps.GPSUtil;
+import io.github.oho_sugu.eyecatch.util.server.ListAsyncTask;
 import io.github.oho_sugu.eyecatch.util.server.PutAsyncTask;
 import io.github.oho_sugu.eyecatch.util.server.ServerParameter;
+
+import java.util.List;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.hardware.Camera;
@@ -64,7 +66,19 @@ public class EyeCatchActivity extends Activity implements CameraPreview.Recognit
 
     // GPS Util
     private GPSUtil gpsutil;
+    private Handler mHandler = new Handler();
     
+    class InvalidateRunnable implements Runnable{
+		public void run() {
+			ListAsyncTask getList =new ListAsyncTask();
+			ServerParameter params = new ServerParameter();
+			params.lat=gpsutil.getLat();
+			params.lon=gpsutil.getLon();
+			getList.execute(params);
+			oView.invalidate();
+			mHandler.postDelayed( this, 500);
+		}
+	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -147,7 +161,8 @@ public class EyeCatchActivity extends Activity implements CameraPreview.Recognit
 		
 		gpsutil = new GPSUtil();
 		gpsutil.onCreate(this);
-		
+
+		mHandler.postDelayed(new InvalidateRunnable(), 500);
 		// Upon interacting with UI controls, delay any scheduled hide()
 		// operations to prevent the jarring behavior of controls going away
 		// while interacting with the UI.
