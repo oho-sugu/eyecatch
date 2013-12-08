@@ -49,7 +49,14 @@ class PutPage(webapp.RequestHandler):
             keyword.geoindex = geoindex
             keyword.put()
 
-        self.response.out.write("OK")
+        keywords = db.GqlQuery("Select * FROM Keyword WHERE geoindex = :1 ORDER BY count DESC LIMIT 10", geoindex)
+
+        ret_array = []
+        for keyword in keywords:
+            dict_key = {"keyword": keyword.keyword, "count": keyword.count, "lat": keyword.lat, "lon": keyword.lon}
+            ret_array.append(dict_key)
+
+        self.response.out.write(json.dumps(ret_array))
 
 class ListPage(webapp.RequestHandler):
     def get(self):
