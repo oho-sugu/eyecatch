@@ -61,7 +61,7 @@ public class DcmApiWrapper {
 //			URIBuilder builder = new URIBuilder(requestQueueUrl);
 //			builder.addParameter("APIKEY",mApiKey);
 //			requestQueueUrl = builder.build();
-			Logger.d(requestQueueUrl.toString());
+			Logger.i(requestQueueUrl.toString());
 			HttpPost httpPost = new HttpPost(requestQueueUrl);
 			MultipartEntity multipartEntity = new MultipartEntity(
 					HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -81,7 +81,7 @@ public class DcmApiWrapper {
 				resultBuilder.append(line + "\n");
 			}
 			String json_str = resultBuilder.toString();
-			Logger.d(json_str);
+			Logger.i(json_str);
 			requestQueue = JSON.decode(json_str, RecognitionRequestQueue.class);
 
 		} catch (URISyntaxException e) {
@@ -102,7 +102,7 @@ public class DcmApiWrapper {
 			requestUrl=requestUrl.resolve("/characterRecognition/v1/scene/");
 			requestUrl=requestUrl.resolve(queue.job.id);
 			requestUrl=requestUrl.resolve("?APIKEY="+mApiKey);
-			Logger.d(requestUrl.toString());
+			Logger.i(requestUrl.toString());
 
 			HttpGet httpGet = new HttpGet(requestUrl);
 
@@ -117,7 +117,7 @@ public class DcmApiWrapper {
 				builder.append(line + "\n");
 			}
 			String json_str = builder.toString();
-			Logger.d(json_str);
+			Logger.i(json_str);
 
 			jobResult = JSON.decode(json_str, RecognitionJobResult.class);
 

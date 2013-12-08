@@ -87,7 +87,8 @@ public class TextRecognitionClient {
 									Logger.d("" + word.score);
 									Logger.d("" + word.category);
 								}
-								if (result.job.status == "success") {
+								if (result.job.status.equals( "success") || result.job.status.equals("deleted")) {
+									Logger.d("Exit Recognition Waiting Loop");
 									break;
 								}
 							}
