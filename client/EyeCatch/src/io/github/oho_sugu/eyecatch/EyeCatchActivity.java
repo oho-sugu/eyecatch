@@ -7,6 +7,8 @@ import io.github.oho_sugu.eyecatch.util.SystemUiHider;
 import io.github.oho_sugu.eyecatch.util.camera.CameraPreview;
 import io.github.oho_sugu.eyecatch.util.camera.CameraUtil;
 import io.github.oho_sugu.eyecatch.util.gps.GPSUtil;
+import io.github.oho_sugu.eyecatch.util.server.PutAsyncTask;
+import io.github.oho_sugu.eyecatch.util.server.ServerParameter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.hardware.Camera;
@@ -214,10 +216,23 @@ public class EyeCatchActivity extends Activity implements CameraPreview.Recognit
 	}
 	
 	public void onRecognitionResult(List<String> words) {
-		// TODO Auto-generated method stub
-		for(String word:words){
-			Logger.d(word);
+		if(gpsutil != null && gpsutil.isTookCoord()){
+			double lat = gpsutil.getLat();
+			double lon = gpsutil.getLon();
+			
+			Logger.d("lat:"+lat+"lon:"+lon);
+			for(String word:words){
+				Logger.d(word);
+				PutAsyncTask pat = new PutAsyncTask();
+				pat.setOverlayView(oView);
+				
+				ServerParameter sp = new ServerParameter();
+				sp.keyword = word;
+				sp.lat = lat;
+				sp.lon = lon;
+				
+				pat.execute(sp);
+			}
 		}
-		
 	}
 }

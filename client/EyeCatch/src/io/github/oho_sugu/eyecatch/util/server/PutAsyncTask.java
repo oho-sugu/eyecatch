@@ -1,6 +1,7 @@
 package io.github.oho_sugu.eyecatch.util.server;
 
 import io.github.oho_sugu.eyecatch.OverlayView;
+import io.github.oho_sugu.eyecatch.textrecognition.util.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -66,6 +67,7 @@ public class PutAsyncTask extends
 		super.onPostExecute(result);
 		
 		if(oView != null){
+			Logger.d("Return Servre Value");
 			oView.updateKeywords(result);
 		}
 	}

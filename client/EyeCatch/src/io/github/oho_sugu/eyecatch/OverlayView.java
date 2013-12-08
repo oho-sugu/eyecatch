@@ -1,5 +1,6 @@
 package io.github.oho_sugu.eyecatch;
 
+import io.github.oho_sugu.eyecatch.textrecognition.util.Logger;
 import io.github.oho_sugu.eyecatch.util.server.ListResult;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -51,6 +52,8 @@ public class OverlayView extends View {
 	}
 	
 	public void updateKeywords(ListResult listResult) {
+		Logger.d("updateKeywords on OverlayView");
 		this.listResult = listResult;
+		this.invalidate();
 	}
 }
