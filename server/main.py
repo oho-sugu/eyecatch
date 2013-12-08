@@ -6,10 +6,10 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.ext import db
 
 def convert_lat(lat):
-    return int((lat + 90) * int("FFFFFFFF", 16) / 180 / 1000)
+    return int((lat + 90) * int("FFFFFFFF", 16) / 180 / 10000)
 
 def convert_lon(lon):
-    return int((lon + 180) * int("FFFFFFFF", 16) / 360 / 1000)
+    return int((lon + 180) * int("FFFFFFFF", 16) / 360 / 10000)
 
 def gen_geo_index(x,y):
     return '%010d-%010d' % (x, y)
