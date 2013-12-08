@@ -1,6 +1,8 @@
 package io.github.oho_sugu.eyecatch;
 
-import io.github.oho_sugu.eyecatch.textrecognition.TextRecognitionClient;
+import java.util.List;
+
+import io.github.oho_sugu.eyecatch.textrecognition.util.Logger;
 import io.github.oho_sugu.eyecatch.util.SystemUiHider;
 import io.github.oho_sugu.eyecatch.util.camera.CameraPreview;
 import io.github.oho_sugu.eyecatch.util.camera.CameraUtil;
@@ -21,7 +23,7 @@ import android.widget.FrameLayout;
  * 
  * @see SystemUiHider
  */
-public class EyeCatchActivity extends Activity {
+public class EyeCatchActivity extends Activity implements CameraPreview.RecognitionResultCallback{
 	/**
 	 * Whether or not the system UI should be auto-hidden after
 	 * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -109,7 +111,7 @@ public class EyeCatchActivity extends Activity {
 				});
 		
       	Camera c = CameraUtil.getCameraInstance();
-	    mCameraPreview = new  CameraPreview(this, c);
+	    mCameraPreview = new  CameraPreview(this, c,this);
 	    Log.d(TAG,"startPreview");
 	    
 	    
@@ -178,5 +180,14 @@ public class EyeCatchActivity extends Activity {
 	private void delayedHide(int delayMillis) {
 		mHideHandler.removeCallbacks(mHideRunnable);
 		mHideHandler.postDelayed(mHideRunnable, delayMillis);
+	}
+
+	@Override
+	public void onRecognitionResult(List<String> words) {
+		// TODO Auto-generated method stub
+		for(String word:words){
+			Logger.d(word);
+		}
+		
 	}
 }
