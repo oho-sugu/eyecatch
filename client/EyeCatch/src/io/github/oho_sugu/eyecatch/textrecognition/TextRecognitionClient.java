@@ -86,6 +86,7 @@ public class TextRecognitionClient {
 								}
 								if (result.job.status.equals( "success") || result.job.status.equals("deleted")) {
 									Logger.d("Exit Recognition Waiting Loop");
+									ret =result;
 									break;
 								}
 							}
