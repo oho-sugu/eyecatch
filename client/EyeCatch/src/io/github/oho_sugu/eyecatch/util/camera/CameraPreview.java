@@ -6,7 +6,6 @@ import java.io.IOException;
 
 import android.content.Context;
 import android.hardware.Camera;
-import android.os.Handler;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -87,7 +86,7 @@ public class CameraPreview extends SurfaceView implements
 
 	
 	@Override
-	public void onPreviewFrame(final byte[] data, Camera camera) {
+	public void onPreviewFrame(final byte[] data, final Camera camera) {
 		// TODO Auto-generated method stub
 		if(TextRecognitionClient.canRequest()){
 			mThread=new Thread(new Runnable() {
@@ -95,7 +94,7 @@ public class CameraPreview extends SurfaceView implements
 				@Override
 				public void run() {
 					// TODO Auto-generated method stub
-					mClient.request(mFormatPreviewCallback, data);
+					mClient.request(camera, data);
 				}
 			});
 			mThread.start();

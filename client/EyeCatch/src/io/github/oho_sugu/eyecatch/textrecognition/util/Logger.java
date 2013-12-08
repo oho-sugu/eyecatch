@@ -4,6 +4,9 @@ import android.util.Log;
 
 public class Logger {
 	static String TAG= "EyeCatch";
+	public static void i(String string){
+		Log.i(TAG,string);
+	}
 	public static void d(String string){
 		Log.d(TAG,string);
 	}

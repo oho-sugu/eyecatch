@@ -5,27 +5,18 @@ import io.github.oho_sugu.eyecatch.textrecognition.core.DcmApiWrapper;
 import io.github.oho_sugu.eyecatch.textrecognition.result.RecognitionJobResult;
 import io.github.oho_sugu.eyecatch.textrecognition.result.RecognitionJobResult.Word;
 import io.github.oho_sugu.eyecatch.textrecognition.result.RecognitionRequestQueue;
-import io.github.oho_sugu.eyecatch.textrecognition.result.common.Job;
 import io.github.oho_sugu.eyecatch.textrecognition.util.JpegConverter;
 import io.github.oho_sugu.eyecatch.textrecognition.util.Logger;
 
-import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
-import java.util.Map;
 import java.util.concurrent.Semaphore;
 
-import net.arnx.jsonic.JSON;
+import android.hardware.Camera;
+import android.os.Environment;
 import android.util.Log;
-import ch.boye.httpclientandroidlib.HttpResponse;
-import ch.boye.httpclientandroidlib.client.HttpClient;
-import ch.boye.httpclientandroidlib.client.methods.HttpPost;
-import ch.boye.httpclientandroidlib.entity.mime.HttpMultipartMode;
-import ch.boye.httpclientandroidlib.entity.mime.MultipartEntity;
-import ch.boye.httpclientandroidlib.entity.mime.content.ByteArrayBody;
-import ch.boye.httpclientandroidlib.impl.client.DefaultHttpClient;
 //import ch.boye.httpclientandroidlib.entity.mime.HttpMultipartMode;
 //import ch.boye.httpclientandroidlib.entity.mime.MultipartEntity;
 //import ch.boye.httpclientandroidlib.entity.mime.content.ByteArrayBody;
@@ -59,15 +50,21 @@ public class TextRecognitionClient {
 
 	}
 
-	public RecognitionJobResult request(int format, byte[] imageData) {
+	public RecognitionJobResult request(Camera camera, byte[] imageData) {
 		RecognitionJobResult ret = null;
 
 		try {
 			mRequestSemaphore.acquire();
 			Log.d(TAG, "Requesting.");
-			byte[] jpegImage = JpegConverter.convertToJpeg(format, imageData);
-
+			byte[] jpegImage = JpegConverter.convertToJpeg(camera, imageData);
+			
+			String path=Environment.getDataDirectory()+"/data/io.github.oho_sugu.eyecatch/test.jpg";
+			FileOutputStream fos;
 			try {
+				 fos = new FileOutputStream(path);
+				fos.write(jpegImage);
+				fos.close();
+
 				RecognitionRequestQueue queue = mDcmApi.requestQueue(jpegImage);
 
 				if (queue != null && queue.job != null) {
@@ -87,7 +84,8 @@ public class TextRecognitionClient {
 									Logger.d("" + word.score);
 									Logger.d("" + word.category);
 								}
-								if (result.job.status == "success") {
+								if (result.job.status.equals( "success") || result.job.status.equals("deleted")) {
+									Logger.d("Exit Recognition Waiting Loop");
 									break;
 								}
 							}
