@@ -4,6 +4,7 @@ import io.github.oho_sugu.eyecatch.textrecognition.TextRecognitionClient;
 import io.github.oho_sugu.eyecatch.util.SystemUiHider;
 import io.github.oho_sugu.eyecatch.util.camera.CameraPreview;
 import io.github.oho_sugu.eyecatch.util.camera.CameraUtil;
+import io.github.oho_sugu.eyecatch.util.gps.GPSUtil;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.hardware.Camera;
@@ -56,6 +57,9 @@ public class EyeCatchActivity extends Activity {
     public static String TAG="EyeCatch";
     
     private OverlayView oView;
+
+    // GPS Util
+    private GPSUtil gpsutil;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +141,9 @@ public class EyeCatchActivity extends Activity {
 		oView = new OverlayView(this);
 		addContentView(oView, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		
+		gpsutil = new GPSUtil();
+		gpsutil.onCreate(this);
+		
 		// Upon interacting with UI controls, delay any scheduled hide()
 		// operations to prevent the jarring behavior of controls going away
 		// while interacting with the UI.
@@ -185,4 +192,24 @@ public class EyeCatchActivity extends Activity {
 		mHideHandler.removeCallbacks(mHideRunnable);
 		mHideHandler.postDelayed(mHideRunnable, delayMillis);
 	}
+
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		if(this.gpsutil != null){
+			this.gpsutil.onPause();
+		}
+	}
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		if(this.gpsutil != null){
+			this.gpsutil.onResume();
+		}
+	}
+	
+	
 }
