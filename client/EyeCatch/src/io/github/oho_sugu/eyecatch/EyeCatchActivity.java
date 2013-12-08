@@ -71,6 +71,7 @@ public class EyeCatchActivity extends Activity implements CameraPreview.Recognit
     class InvalidateRunnable implements Runnable{
 		public void run() {
 			ListAsyncTask getList =new ListAsyncTask();
+			getList.setOverlayView(oView);
 			ServerParameter params = new ServerParameter();
 			params.lat=gpsutil.getLat();
 			params.lon=gpsutil.getLon();
