@@ -117,7 +117,7 @@ public class DcmApiWrapper {
 				builder.append(line + "\n");
 			}
 			String json_str = builder.toString();
-			Logger.i(json_str);
+//			Logger.i(json_str);
 
 			jobResult = JSON.decode(json_str, RecognitionJobResult.class);
 
@@ -127,5 +127,4 @@ public class DcmApiWrapper {
 		}
 		return jobResult;
 	}
-
 }

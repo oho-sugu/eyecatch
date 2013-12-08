@@ -5,12 +5,15 @@ import java.io.IOException;
 
 import android.graphics.Rect;
 import android.graphics.YuvImage;
+import android.hardware.Camera;
 
 public class JpegConverter {
 
-	public static byte[] convertToJpeg(int format, byte[] yuvImage) {
+	public static byte[] convertToJpeg(Camera camera, byte[] yuvImage) {
 		byte[] jpegImage = null;
-		YuvImage image = new YuvImage(yuvImage, format, 428, 240, null);
+	    Camera.Parameters params = camera.getParameters();
+        Camera.Size size = params.getPreviewSize();
+		YuvImage image = new YuvImage(yuvImage,params.getPreviewFormat(), size.width,size.height, null);
 
 		Rect rect = new Rect(0, 0, 428, 240);
 		try {
