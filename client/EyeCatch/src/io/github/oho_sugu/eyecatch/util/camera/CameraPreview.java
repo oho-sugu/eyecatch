@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import android.content.Context;
 import android.hardware.Camera;
+import android.os.Handler;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -17,11 +18,14 @@ public class CameraPreview extends SurfaceView implements
 	static String TAG = "CameraPreview.cls";
     private TextRecognitionClient mClient;
     int mFormatPreviewCallback;
+    
+    Thread mThread;
+    
 	public CameraPreview(Context context, Camera camera) {
 		// TODO Auto-generated constructor stub
 		super(context);
 		mCamera = camera;
-
+		
 		mFormatPreviewCallback = mCamera.getParameters().getPreviewFormat();
 		// Install a SurfaceHolder.Callback so we get notified when the
 		// underlying surface is created and destroyed.
@@ -83,13 +87,18 @@ public class CameraPreview extends SurfaceView implements
 
 	
 	@Override
-	public void onPreviewFrame(byte[] data, Camera camera) {
+	public void onPreviewFrame(final byte[] data, Camera camera) {
 		// TODO Auto-generated method stub
-		if(mClient.canRequest()){
-			
-//			imageData 
-			
-			mClient.request(mFormatPreviewCallback,data);
+		if(TextRecognitionClient.canRequest()){
+			mThread=new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					mClient.request(mFormatPreviewCallback, data);
+				}
+			});
+			mThread.start();
 			
 		}
 

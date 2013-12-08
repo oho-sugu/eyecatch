@@ -1,44 +1,56 @@
 package io.github.oho_sugu.eyecatch.textrecognition;
 
 import io.github.oho_sugu.eyecatch.EyeCatchActivity;
+import io.github.oho_sugu.eyecatch.textrecognition.core.DcmApiWrapper;
+import io.github.oho_sugu.eyecatch.textrecognition.result.RecognitionJobResult;
+import io.github.oho_sugu.eyecatch.textrecognition.result.RecognitionJobResult.Word;
+import io.github.oho_sugu.eyecatch.textrecognition.result.RecognitionRequestQueue;
+import io.github.oho_sugu.eyecatch.textrecognition.result.common.Job;
+import io.github.oho_sugu.eyecatch.textrecognition.util.JpegConverter;
+import io.github.oho_sugu.eyecatch.textrecognition.util.Logger;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
+import java.util.Map;
 import java.util.concurrent.Semaphore;
 
-import jp.ne.nttdocomo.spm.api.common.exception.SdkException;
-import jp.ne.nttdocomo.spm.api.common.exception.ServerException;
-import jp.ne.nttdocomo.spm.api.common.http.AuthApiKey;
-import jp.ne.nttdocomo.spm.api.recognition.CharacterRecognize;
-import jp.ne.nttdocomo.spm.api.recognition.CharacterRecognizeResult;
-import jp.ne.nttdocomo.spm.api.recognition.constants.ImageContentType;
-import jp.ne.nttdocomo.spm.api.recognition.constants.Lang;
-import jp.ne.nttdocomo.spm.api.recognition.data.RecognizeResultData;
-import jp.ne.nttdocomo.spm.api.recognition.data.RecognizeStatusData;
-import jp.ne.nttdocomo.spm.api.recognition.param.CharacterRecognizeJobInfoRequestParam;
-import jp.ne.nttdocomo.spm.api.recognition.param.CharacterRecognizeRequestParam;
-import android.graphics.Rect;
-import android.graphics.YuvImage;
+import net.arnx.jsonic.JSON;
 import android.util.Log;
+import ch.boye.httpclientandroidlib.HttpResponse;
+import ch.boye.httpclientandroidlib.client.HttpClient;
+import ch.boye.httpclientandroidlib.client.methods.HttpPost;
+import ch.boye.httpclientandroidlib.entity.mime.HttpMultipartMode;
+import ch.boye.httpclientandroidlib.entity.mime.MultipartEntity;
+import ch.boye.httpclientandroidlib.entity.mime.content.ByteArrayBody;
+import ch.boye.httpclientandroidlib.impl.client.DefaultHttpClient;
+//import ch.boye.httpclientandroidlib.entity.mime.HttpMultipartMode;
+//import ch.boye.httpclientandroidlib.entity.mime.MultipartEntity;
+//import ch.boye.httpclientandroidlib.entity.mime.content.ByteArrayBody;
 
 public class TextRecognitionClient {
-	private boolean mIsRequesting = false;
-	private Semaphore mRequestSemaphore;
-	CharacterRecognize mRecognize;
+	private static Semaphore mRequestSemaphore;
 	private String TAG = EyeCatchActivity.TAG;
+	DcmApiWrapper mDcmApi;
 
 	public TextRecognitionClient() {
-		// TODO Auto-generated constructor stub
-		AuthApiKey.initializeAuth("ApiKey");
-		mRecognize = new CharacterRecognize();
 
 		mRequestSemaphore = new Semaphore(1);
-
+		try {
+			mDcmApi = DcmApiWrapper
+					.factory("74545a3739775362454c313463572f36783932334571562f6338753432775633394b6a374b4a754f7a3541");
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
-	synchronized public boolean canRequest() {
-		boolean isRequesting = false;
+	synchronized public static boolean canRequest() {
 		int availableCount = 0;
 		availableCount = mRequestSemaphore.availablePermits();
-		Log.d(TAG, "canRequest");
+		// Log.d(TAG, "canRequest");
 		if (availableCount == 0) {
 			return false;
 		} else {
@@ -47,36 +59,49 @@ public class TextRecognitionClient {
 
 	}
 
-	public RecognizeResultData request(int format, byte[] imageData) {
-		RecognizeResultData ret = null;
-		Log.d(TAG, "request");
+	public RecognitionJobResult request(int format, byte[] imageData) {
+		RecognitionJobResult ret = null;
 
 		try {
 			mRequestSemaphore.acquire();
-
 			Log.d(TAG, "Requesting.");
+			byte[] jpegImage = JpegConverter.convertToJpeg(format, imageData);
 
-			CharacterRecognizeRequestParam requestParam = new CharacterRecognizeRequestParam();
-			requestParam.setLang(Lang.CHARACTERS_JP);
-			// requestParam.setImageData(“image.jpgのフルパス”);
-			requestParam.setImageContentType(ImageContentType.IMAGE_JPEG);
-			// 認識処理クラスにリクエストデータを渡し、レスポンスデータを取得する
 			try {
-				RecognizeStatusData response = mRecognize.request(requestParam);
+				RecognitionRequestQueue queue = mDcmApi.requestQueue(jpegImage);
 
-				CharacterRecognizeResult recognizer = new CharacterRecognizeResult();
-				// 認識結果取得リクエストデータクラスを作成してジョブ ID をセットする
-				CharacterRecognizeJobInfoRequestParam resultRequestParam = new CharacterRecognizeJobInfoRequestParam();
-
-				resultRequestParam.setJobId(response.getJob().getId());
-				// 認識処理クラス 状態取得メソッドにリクエストデータを渡し、レスポンスデータを取得する
-				ret = recognizer.request(resultRequestParam);
-			} catch (SdkException e) {
+				if (queue != null) {
+					Log.d(TAG, queue.toString());
+					Log.d(TAG, queue.job.id);
+					Log.d(TAG, queue.job.queue_time);
+					Log.d(TAG, queue.job.status);
+					Log.d(TAG, queue.message.text);
+				}
+				while(true){
+					RecognitionJobResult result= mDcmApi.requestRecognitionResult(queue);
+					if(result!=null){
+						for (Word word:result.words.word){
+							Logger.d(word.text);
+							Logger.d(""+word.score);
+							Logger.d(""+word.category);
+						}
+						if(result.job.status=="success"){
+							
+						}
+					}
+					break;
+				}
+			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (ServerException e) {
+			} catch (IllegalStateException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				Log.e(EyeCatchActivity.TAG, "Finish Recognition");
 			}
 
 		} catch (InterruptedException e1) {
@@ -89,14 +114,4 @@ public class TextRecognitionClient {
 		return ret;
 	}
 
-	private byte[] convertToJpeg(int format ,byte[] yuvImage){
-		byte[] jpegImage =null;
-		YuvImage image = new YuvImage(yuvImage, format, 428, 240, null);
-
-		Rect rect = new Rect(0, 0, 428, 240);
-
-		return jpegImage;
-		
-		
-	}
 }
