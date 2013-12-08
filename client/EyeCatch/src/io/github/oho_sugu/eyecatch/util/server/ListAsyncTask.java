@@ -1,5 +1,7 @@
 package io.github.oho_sugu.eyecatch.util.server;
 
+import io.github.oho_sugu.eyecatch.OverlayView;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,6 +18,10 @@ import android.os.AsyncTask;
 public class ListAsyncTask extends
 		AsyncTask<ServerParameter, Integer, ListResult> {
 	private static final String DOMAIN = "http://eyecatcher12345.appspot.com/";
+	private OverlayView oView;
+	public void setOverlayView(OverlayView view){
+		this.oView = view;
+	}
 
 	@Override
 	protected ListResult doInBackground(ServerParameter... arg0) {
@@ -51,5 +57,15 @@ public class ListAsyncTask extends
 			e.printStackTrace();
 		}
 		return listResult;
+	}
+
+	@Override
+	protected void onPostExecute(ListResult result) {
+		// TODO Auto-generated method stub
+		super.onPostExecute(result);
+		
+		if(oView != null){
+			oView.updateKeywords(result);
+		}
 	}
 }

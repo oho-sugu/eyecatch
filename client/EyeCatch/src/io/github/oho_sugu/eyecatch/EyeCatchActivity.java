@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 
 /**
@@ -53,6 +54,8 @@ public class EyeCatchActivity extends Activity {
 	
     private CameraPreview mCameraPreview;
     public static String TAG="EyeCatch";
+    
+    private OverlayView oView;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -131,6 +134,9 @@ public class EyeCatchActivity extends Activity {
 			
 		});
 
+		oView = new OverlayView(this);
+		addContentView(oView, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		
 		// Upon interacting with UI controls, delay any scheduled hide()
 		// operations to prevent the jarring behavior of controls going away
 		// while interacting with the UI.
