@@ -76,7 +76,9 @@ public class EyeCatchActivity extends Activity implements CameraPreview.Recognit
 			params.lat=gpsutil.getLat();
 			params.lon=gpsutil.getLon();
 			getList.execute(params);
-			oView.invalidate();
+			if(oView != null){
+				oView.invalidate();
+			}
 			mHandler.postDelayed( this, 500);
 		}
 	}
