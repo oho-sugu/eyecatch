@@ -56,6 +56,8 @@ class PutPage(webapp.RequestHandler):
             dict_key = {"keyword": keyword.keyword, "count": keyword.count, "lat": keyword.lat, "lon": keyword.lon}
             ret_array.append(dict_key)
 
+        ret_array = {"catch": ret_array}
+
         self.response.out.write(json.dumps(ret_array))
 
 class ListPage(webapp.RequestHandler):
@@ -72,6 +74,8 @@ class ListPage(webapp.RequestHandler):
         for keyword in keywords:
             dict_key = {"keyword": keyword.keyword, "count": keyword.count, "lat": keyword.lat, "lon": keyword.lon}
             ret_array.append(dict_key)
+
+        ret_array = {"catch": ret_array}
 
         self.response.out.write(json.dumps(ret_array))
 
