@@ -8,9 +8,10 @@ import android.location.LocationProvider;
 import android.os.Bundle;
 
 public class GPSUtil implements LocationListener {
-	private LocationManager mLocationManager;
-	private boolean getGPSValue = false;
-	private double lat, lon;
+	//private LocationManager mLocationManager;
+	//private boolean getGPSValue = false;
+	private boolean getGPSValue = true;
+	private double lat=35.667042, lon= 139.74001;
 
 	public boolean isTookCoord() {
 		return getGPSValue;
@@ -25,27 +26,29 @@ public class GPSUtil implements LocationListener {
 	}
 
 	public void onCreate(Activity parent) {
-		mLocationManager = (LocationManager) parent
-				.getSystemService(Activity.LOCATION_SERVICE);
+		//mLocationManager = (LocationManager) parent
+		//		.getSystemService(Activity.LOCATION_SERVICE);
 	}
 
 	public void onResume() {
-		if (mLocationManager != null) {
+	/*	if (mLocationManager != null) {
 			mLocationManager.requestLocationUpdates(
 					LocationManager.GPS_PROVIDER, 0, 0, this);
-		}
+		}*/
 	}
 
 	public void onPause() {
-		if (mLocationManager != null) {
+	/*	if (mLocationManager != null) {
 			mLocationManager.removeUpdates(this);
-		}
+		}*/
 	}
 
 	public void onLocationChanged(Location location) {
+		/*
 		lat = Double.valueOf(location.getLatitude());
 		lon = Double.valueOf(location.getLongitude());
 		getGPSValue = true;
+		*/
 	}
 
 	public void onProviderEnabled(String provider) {
