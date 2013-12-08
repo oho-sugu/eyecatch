@@ -7,4 +7,7 @@ public class Logger {
 	public static void d(String string){
 		Log.d(TAG,string);
 	}
+	public static void e(String string){
+		Log.e(TAG,string);
+	}
 }

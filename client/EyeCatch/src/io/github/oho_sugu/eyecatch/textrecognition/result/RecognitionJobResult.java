@@ -22,7 +22,8 @@ public class RecognitionJobResult {
 
 		@JSONHint(name = "@count")
 		public int count;
-		List<Object> point;
+		@JSONHint(name = "@count")
+		List<Point> point;
 	}
 
 	public class Word {
@@ -32,6 +33,7 @@ public class RecognitionJobResult {
 		public float score;
 		@JSONHint(name = "@category")
 		public String category;
+		@JSONHint(name = "shape")
 		public Shape shape;
 
 	}
