@@ -70,23 +70,26 @@ public class TextRecognitionClient {
 			try {
 				RecognitionRequestQueue queue = mDcmApi.requestQueue(jpegImage);
 
-				if (queue != null&&queue.job!=null) {
+				if (queue != null && queue.job != null) {
 					Log.d(TAG, queue.toString());
 					Log.d(TAG, queue.job.id);
 					Log.d(TAG, queue.job.queue_time);
 					Log.d(TAG, queue.job.status);
-//					Log.d(TAG, queue.message.text);
+					// Log.d(TAG, queue.message.text);
 					while (true) {
 						RecognitionJobResult result = mDcmApi
 								.requestRecognitionResult(queue);
-						if (result != null && result.words!=null) {
-							for (Word word : result.words.word) {
-								Logger.d(word.text);
-								Logger.d("" + word.score);
-								Logger.d("" + word.category);
-							}
-							if (result.job.status == "success") {
-								break;
+						if (result != null) {
+							if (result.words != null && result.job != null) {
+								Logger.d("" + result.job.status);
+								for (Word word : result.words.word) {
+									Logger.d(word.text);
+									Logger.d("" + word.score);
+									Logger.d("" + word.category);
+								}
+								if (result.job.status == "success") {
+									break;
+								}
 							}
 						}
 					}

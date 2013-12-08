@@ -99,9 +99,10 @@ public class DcmApiWrapper {
 		try {
 			client = new DefaultHttpClient();
 			requestUrl = URIUtils.rewriteURI(mCommonUrl);
-			requestUrl.resolve("/characterRecognition/v1/scene");
-			requestUrl.resolve(queue.job.id);
-
+			requestUrl=requestUrl.resolve("/characterRecognition/v1/scene/");
+			requestUrl=requestUrl.resolve(queue.job.id);
+			requestUrl=requestUrl.resolve("?APIKEY="+mApiKey);
+			Logger.d(requestUrl.toString());
 
 			HttpGet httpGet = new HttpGet(requestUrl);
 
