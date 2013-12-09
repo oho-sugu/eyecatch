@@ -1,6 +1,7 @@
 package io.github.oho_sugu.eyecatch.util.server;
 
 import io.github.oho_sugu.eyecatch.OverlayView;
+import io.github.oho_sugu.eyecatch.textrecognition.util.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,19 +20,21 @@ public class PutAsyncTask extends
 		AsyncTask<ServerParameter, Integer, ListResult> {
 	private static final String DOMAIN = "http://eyecatcher12345.appspot.com/";
 	private OverlayView oView;
-	public void setOverlayView(OverlayView view){
+
+	public void setOverlayView(OverlayView view) {
 		this.oView = view;
 	}
-	
+
 	@Override
 	protected ListResult doInBackground(ServerParameter... arg0) {
 		if (arg0.length != 1)
 			return null;
 
 		ListResult listResult = null;
+		AndroidHttpClient client = null;
+
 		try {
-			AndroidHttpClient client = AndroidHttpClient
-					.newInstance("Vuzix Android UserAgent");
+			client = AndroidHttpClient.newInstance("Vuzix Android UserAgent");
 			HttpResponse res = client.execute(new HttpGet(DOMAIN + "put?key="
 					+ arg0[0].keyword + "&lat=" + arg0[0].lat + "&lon="
 					+ arg0[0].lon));
@@ -56,6 +59,10 @@ public class PutAsyncTask extends
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			if (client != null) {
+				client.close();
+			}
 		}
 		return listResult;
 	}
@@ -64,8 +71,9 @@ public class PutAsyncTask extends
 	protected void onPostExecute(ListResult result) {
 		// TODO Auto-generated method stub
 		super.onPostExecute(result);
-		
-		if(oView != null){
+
+		if (oView != null) {
+			Logger.d("Return Servre Value");
 			oView.updateKeywords(result);
 		}
 	}

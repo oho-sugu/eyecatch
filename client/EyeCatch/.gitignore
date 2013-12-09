@@ -1,3 +1,5 @@
-/bin
 /gen
-
+/bin
+.DS_Store
+.classpath
+.project
